@@ -1,0 +1,120 @@
+name: Metrics
+
+on:
+  schedule:
+    - cron: "0 */12 * * *"
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  github-metrics:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: lowlighter/metrics@latest
+        name: Personal stats
+        with:
+          filename: metrics-stats.svg
+          token: ${{ secrets.METRICS_TOKEN || github.token }}
+          committer_branch: metrics
+          committer_message: "chore: update metrics"
+          user: Pluviobyte
+          template: classic
+          base: activity, community
+          config_timezone: Asia/Shanghai
+          config_padding: 0, 8
+
+      - uses: lowlighter/metrics@latest
+        name: Top languages
+        with:
+          filename: metrics-langs.svg
+          token: ${{ secrets.METRICS_TOKEN || github.token }}
+          committer_branch: metrics
+          committer_message: "chore: update metrics"
+          user: Pluviobyte
+          template: classic
+          base: ""
+          config_timezone: Asia/Shanghai
+          config_padding: 0, 8
+          plugin_languages: true
+          plugin_languages_ignored: html, css, javascript
+          plugin_languages_details: percentage
+          plugin_languages_limit: 8
+          plugin_languages_sections: most-used
+          plugin_languages_indepth: false
+
+      - uses: lowlighter/metrics@latest
+        name: Repo openclaw
+        with:
+          filename: metrics-repo-openclaw.svg
+          token: ${{ secrets.METRICS_TOKEN || github.token }}
+          committer_branch: metrics
+          committer_message: "chore: update metrics"
+          user: openclaw
+          template: repository
+          repo: openclaw
+          config_timezone: Asia/Shanghai
+
+      - uses: lowlighter/metrics@latest
+        name: Repo hermes-agent
+        with:
+          filename: metrics-repo-hermes-agent.svg
+          token: ${{ secrets.METRICS_TOKEN || github.token }}
+          committer_branch: metrics
+          committer_message: "chore: update metrics"
+          user: NousResearch
+          template: repository
+          repo: hermes-agent
+          config_timezone: Asia/Shanghai
+
+      - uses: lowlighter/metrics@latest
+        name: Repo sub2api
+        with:
+          filename: metrics-repo-sub2api.svg
+          token: ${{ secrets.METRICS_TOKEN || github.token }}
+          committer_branch: metrics
+          committer_message: "chore: update metrics"
+          user: Wei-Shaw
+          template: repository
+          repo: sub2api
+          config_timezone: Asia/Shanghai
+
+      - uses: lowlighter/metrics@latest
+        name: Repo gemini-cli
+        with:
+          filename: metrics-repo-gemini-cli.svg
+          token: ${{ secrets.METRICS_TOKEN || github.token }}
+          committer_branch: metrics
+          committer_message: "chore: update metrics"
+          user: google-gemini
+          template: repository
+          repo: gemini-cli
+          config_timezone: Asia/Shanghai
+
+      - uses: lowlighter/metrics@latest
+        name: Repo kimi-cli
+        with:
+          filename: metrics-repo-kimi-cli.svg
+          token: ${{ secrets.METRICS_TOKEN || github.token }}
+          committer_branch: metrics
+          committer_message: "chore: update metrics"
+          user: MoonshotAI
+          template: repository
+          repo: kimi-cli
+          config_timezone: Asia/Shanghai
+
+      - uses: lowlighter/metrics@latest
+        name: Repo OpenSpec
+        with:
+          filename: metrics-repo-openspec.svg
+          token: ${{ secrets.METRICS_TOKEN || github.token }}
+          committer_branch: metrics
+          committer_message: "chore: update metrics"
+          user: Fission-AI
+          template: repository
+          repo: OpenSpec
+          config_timezone: Asia/Shanghai
