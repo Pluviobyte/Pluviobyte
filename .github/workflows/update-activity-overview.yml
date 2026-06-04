@@ -1,0 +1,41 @@
+name: Update activity overview
+
+on:
+  schedule:
+    - cron: "17 2 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out profile repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Render activity overview
+        run: python scripts/render_activity_overview.py
+        env:
+          GITHUB_TOKEN: ${{ secrets.PROFILE_TOKEN || github.token }}
+          PROFILE_LOGIN: Pluviobyte
+          FOCUS_ORGS: openclaw,n8n-io
+
+      - name: Commit refreshed overview
+        run: |
+          if git diff --quiet; then
+            echo "Activity overview already up to date."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md assets/activity-overview.svg
+          git commit -m "Update activity overview"
+          git push
