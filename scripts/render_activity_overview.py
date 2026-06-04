@@ -3,8 +3,8 @@
 
 from __future__ import annotations
 
+import base64
 import json
-import math
 import os
 import subprocess
 import sys
@@ -110,6 +110,29 @@ def graphql(query: str, variables: dict[str, Any]) -> dict[str, Any]:
     return body["data"]
 
 
+def avatar_data_uri(login: str) -> str | None:
+    """Fetch a GitHub avatar and return it as an embedded SVG-safe data URI."""
+    url = f"https://github.com/{login}.png?size=64"
+    request = urllib.request.Request(
+        url,
+        headers={"User-Agent": "profile-activity-overview-renderer"},
+    )
+    try:
+        with urllib.request.urlopen(request, timeout=30) as response:
+            content_type = response.headers.get("Content-Type", "image/png").split(";", 1)[0]
+            if not content_type.startswith("image/"):
+                content_type = "image/png"
+            encoded = base64.b64encode(response.read()).decode("ascii")
+    except Exception:
+        return None
+    return f"data:{content_type};base64,{encoded}"
+
+
+def safe_svg_id(value: str) -> str:
+    safe = "".join(ch.lower() if ch.isalnum() else "-" for ch in value).strip("-")
+    return safe or "avatar"
+
+
 def pct(value: int, total: int) -> int:
     return round((value / total) * 100) if total else 0
 
@@ -194,11 +217,32 @@ def heatmap_svg(weeks: list[dict[str, Any]], x0: int = 86, y0: int = 122) -> str
     return "\n".join(bits)
 
 
-def chip(x: int, y: int, label: str, width: int) -> str:
-    return (
-        f'<rect x="{x}" y="{y}" width="{width}" height="44" rx="10" fill="#ffffff" stroke="#d0d7de"/>'
-        f'<text x="{x + 18}" y="{y + 29}" class="chip">@{escape(label)}</text>'
-    )
+def chip(
+    x: int,
+    y: int,
+    label: str,
+    width: int,
+    avatar: str | None = None,
+    *,
+    prefix_at: bool = True,
+) -> str:
+    display_label = f"@{label}" if prefix_at else label
+    text_x = x + 18
+    pieces = [f'<rect x="{x}" y="{y}" width="{width}" height="44" rx="10" fill="#ffffff" stroke="#d0d7de"/>']
+    if avatar:
+        avatar_x = x + 10
+        avatar_y = y + 6
+        clip_id = f"avatar-{safe_svg_id(label)}"
+        pieces.extend(
+            [
+                f'<clipPath id="{clip_id}"><rect x="{avatar_x}" y="{avatar_y}" width="32" height="32" rx="8"/></clipPath>',
+                f'<image href="{avatar}" x="{avatar_x}" y="{avatar_y}" width="32" height="32" preserveAspectRatio="xMidYMid slice" clip-path="url(#{clip_id})"/>',
+                f'<rect x="{avatar_x}" y="{avatar_y}" width="32" height="32" rx="8" fill="none" stroke="#d0d7de"/>',
+            ],
+        )
+        text_x = x + 52
+    pieces.append(f'<text x="{text_x}" y="{y + 29}" class="chip">{escape(display_label)}</text>')
+    return "".join(pieces)
 
 
 def quadrant_svg(collection: dict[str, Any], x0: int = 800, y0: int = 512) -> str:
@@ -245,7 +289,7 @@ def quadrant_svg(collection: dict[str, Any], x0: int = 800, y0: int = 512) -> st
     )
 
 
-def render(user: dict[str, Any], generated_at: datetime) -> str:
+def render(user: dict[str, Any], generated_at: datetime, avatars: dict[str, str | None]) -> str:
     collection = user["contributionsCollection"]
     calendar = collection["contributionCalendar"]
     repos, other_count = repo_summary(user)
@@ -262,10 +306,10 @@ def render(user: dict[str, Any], generated_at: datetime) -> str:
     chips = []
     x = 64
     for org in FOCUS_ORGS[:3]:
-        width = max(122, 44 + len(org) * 10)
-        chips.append(chip(x, 328, org, width))
+        width = max(150, 76 + len(org) * 10)
+        chips.append(chip(x, 328, org, width, avatars.get(org)))
         x += width + 12
-    chips.append(chip(x, 328, "More", 112))
+    chips.append(chip(x, 328, "More", 112, prefix_at=False))
 
     repo_text = []
     y = 442
@@ -301,7 +345,7 @@ def render(user: dict[str, Any], generated_at: datetime) -> str:
   {text(32, 48, f'{int(calendar["totalContributions"]):,} contributions in the last year', "title")}
   <rect x="32" y="74" width="1016" height="682" rx="8" class="card"/>
   {heatmap_svg(calendar["weeks"])}
-  <line x1="32" y1="292" x2="928" y2="292" class="divider"/>
+  <line x1="32" y1="292" x2="1048" y2="292" class="divider"/>
   {"".join(chips)}
   {text(64, 405, "Activity overview", "section")}
   <path d="M70 434h20v26H78l-8 7v-33Zm5 6v15h8v4l5-4h2v-15H75Z" fill="#57606a"/>
@@ -326,8 +370,9 @@ def main() -> None:
     user = data.get("user")
     if not user:
         raise SystemExit(f"GitHub user not found: {PROFILE_LOGIN}")
+    avatars = {org: avatar_data_uri(org) for org in FOCUS_ORGS[:3]}
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
-    OUTPUT.write_text(render(user, now), encoding="utf-8")
+    OUTPUT.write_text(render(user, now, avatars), encoding="utf-8")
 
 
 if __name__ == "__main__":
