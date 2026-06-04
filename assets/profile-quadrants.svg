@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="680" viewBox="0 0 1080 680" role="img" aria-labelledby="title desc">
+  <title id="title">Pluviobyte contribution quadrants</title>
+  <desc id="desc">A four-quadrant map of open source contribution areas: agent platforms, workflow automation, cloud operations, and model gateways.</desc>
+  <defs>
+    <linearGradient id="panel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#101722"/>
+      <stop offset="100%" stop-color="#0b0f17"/>
+    </linearGradient>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="14" stdDeviation="16" flood-color="#000000" flood-opacity="0.26"/>
+    </filter>
+    <style>
+      .bg { fill: #0d1117; }
+      .frame { fill: url(#panel); stroke: #2d3748; stroke-width: 1.5; }
+      .grid { stroke: #334155; stroke-width: 1.2; }
+      .axis { fill: #94a3b8; font: 500 14px ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .title { fill: #f8fafc; font: 700 34px ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .subtitle { fill: #b6c2d2; font: 500 16px ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .quad-title { fill: #f8fafc; font: 700 22px ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .quad-copy { fill: #cbd5e1; font: 500 15px ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .tag { font: 700 13px ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .tiny { fill: #8ea0b8; font: 500 12px ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    </style>
+  </defs>
+
+  <rect class="bg" width="1080" height="680" rx="28"/>
+  <rect x="36" y="34" width="1008" height="612" rx="26" class="frame" filter="url(#softShadow)"/>
+
+  <text x="72" y="92" class="title">Contribution Quadrants</text>
+  <text x="72" y="124" class="subtitle">Open source work mapped by platform depth and automation leverage.</text>
+
+  <g transform="translate(72 162)">
+    <rect x="0" y="0" width="936" height="456" rx="20" fill="#111827" stroke="#253246" stroke-width="1.2"/>
+    <line x1="468" y1="22" x2="468" y2="434" class="grid"/>
+    <line x1="22" y1="228" x2="914" y2="228" class="grid"/>
+
+    <text x="26" y="450" class="axis">Runtime foundations</text>
+    <text x="748" y="450" class="axis">Operator workflows</text>
+    <text x="-136" y="20" class="axis" transform="rotate(-90)">Community signal</text>
+    <text x="-414" y="20" class="axis" transform="rotate(-90)">Production leverage</text>
+
+    <g transform="translate(34 34)">
+      <rect x="0" y="0" width="400" height="170" rx="16" fill="#13201b" stroke="#2dd4bf" stroke-opacity="0.5"/>
+      <text x="24" y="38" class="quad-title">Agent Platforms</text>
+      <text x="24" y="70" class="quad-copy">@openclaw runtime, gateway, providers</text>
+      <text x="24" y="96" class="quad-copy">Review bots, session safety, tool flows</text>
+      <rect x="24" y="124" width="112" height="28" rx="14" fill="#0f766e"/>
+      <text x="42" y="143" class="tag" fill="#ecfeff">openclaw</text>
+    </g>
+
+    <g transform="translate(502 34)">
+      <rect x="0" y="0" width="400" height="170" rx="16" fill="#201b13" stroke="#f59e0b" stroke-opacity="0.6"/>
+      <text x="24" y="38" class="quad-title">Workflow Automation</text>
+      <text x="24" y="70" class="quad-copy">@n8n-io patterns and integrations</text>
+      <text x="24" y="96" class="quad-copy">Reliable triggers, retries, and handoffs</text>
+      <rect x="24" y="124" width="96" height="28" rx="14" fill="#b45309"/>
+      <text x="42" y="143" class="tag" fill="#fff7ed">n8n-io</text>
+    </g>
+
+    <g transform="translate(34 262)">
+      <rect x="0" y="0" width="400" height="170" rx="16" fill="#151b2d" stroke="#60a5fa" stroke-opacity="0.55"/>
+      <text x="24" y="38" class="quad-title">Cloud Operations</text>
+      <text x="24" y="70" class="quad-copy">openperf/openclaw-cloud, CI, infra</text>
+      <text x="24" y="96" class="quad-copy">Observability and release confidence</text>
+      <rect x="24" y="124" width="132" height="28" rx="14" fill="#1d4ed8"/>
+      <text x="42" y="143" class="tag" fill="#eff6ff">openperf</text>
+    </g>
+
+    <g transform="translate(502 262)">
+      <rect x="0" y="0" width="400" height="170" rx="16" fill="#201622" stroke="#e879f9" stroke-opacity="0.52"/>
+      <text x="24" y="38" class="quad-title">Model Gateways</text>
+      <text x="24" y="70" class="quad-copy">sub2api, new-api, pricing, streaming</text>
+      <text x="24" y="96" class="quad-copy">Compatibility across OpenAI-style APIs</text>
+      <rect x="24" y="124" width="118" height="28" rx="14" fill="#a21caf"/>
+      <text x="42" y="143" class="tag" fill="#fdf4ff">gateways</text>
+    </g>
+  </g>
+
+  <text x="72" y="632" class="tiny">Activity overview: openclaw/openclaw, openperf/openclaw-cloud, openclaw/clawsweeper, and related OSS maintenance.</text>
+</svg>
